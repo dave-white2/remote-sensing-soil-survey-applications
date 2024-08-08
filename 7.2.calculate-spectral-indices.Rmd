@@ -2,8 +2,8 @@
 title: "Lab Exercise 7.2 Calculate Spectral Indices"
 date: "2024-07-30"
 output:
-  word_document: default
   html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -89,20 +89,10 @@ plotRGB(s2,
 
 
 
-For a smoother visual output, set smooth option = TRUE
-```{r rgbsmooth}
-# add smoothing to the plot
-plotRGB(s2,
-        r = 'red',
-        g = 'green',
-        b = 'blue',
-        stretch = 'lin',
-        smooth = TRUE)
-```
 
+We can also change which bands are shown in the plot. Set the red color channel to swir2, the green color channel to nir, and the blue channel to green. This combination has many useful applications, from mineralogical differences in arid landscapes to differentiating between land cover classes.
 
-
-We can also change which bands are shown in the plot. Set the red color channel to swir2, the green color channel to nir, and the blue channel to green. This combination has many useful applications, from minerological differences in arid landscapes to differentiating between land cover classes.
+For a smoother visual output, set smooth option = TRUE.
 ```{r enhancedPlot}
 plotRGB(s2,
         r = 'swir2',
