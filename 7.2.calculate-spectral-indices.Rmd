@@ -2,8 +2,8 @@
 title: "Lab Exercise 7.2 Calculate Spectral Indices"
 date: "2024-07-30"
 output:
-  html_document: default
   word_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Required time: 30 minutes
 
-# Data reqired:
+# Data required:
  R-script: https://link to final script.r  
   
  The cloud optimized geotiff (COG) used in this exercise is a median composite of Harmonized Sentinel 2 MSI surface reflectance data for the San Rafael Swell Area of Utah. It was compiled using the code editor in Google Earth Engine. 
@@ -27,7 +27,7 @@ bands:      ['B2','B3','B4','B5','B6','B7','B8','B8A', 'B11','B12']
 renamed to: ['blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'swir1', 'swir2'].    
 
   
-For more information on the Harmonized Sentinel 2 dataset: https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED  
+For more information on the Harmonized Sentinel 2 data set: https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED  
 
   
 
@@ -36,7 +36,7 @@ For more information on the Harmonized Sentinel 2 dataset: https://developers.go
  2. Define normalized difference function, calculate indices and plot 
  3. Calculate other well known spectral indices and plot  
   
-# Calculate spectaral indices overview
+# Calculate spectral indices overview
 >In this exercise you will work with a cloud optimized geotiff or COG. This COG contains a composite image of Sentinel2 data. You will visualize this data assigning different bands to each of the different color channel R,G,B. The data will then be used to calculate various spectral indices. 
 
   
@@ -54,7 +54,7 @@ s2 <- rast('https://storage.googleapis.com/rsssa-bucket/sen2_srSwell_2015-2020.t
 names(s2)
 ```
 
-Get the min/max values from the raster stack. This is needed to display the RGB compoite image
+Get the min/max values from the raster stack. This is needed to display the RGB composite image
 ```{r minmax}
 setMinMax(s2)
 ```
@@ -66,8 +66,12 @@ print(setMinMax(s2))
 
 
 ## Plot Spectral Composite
-We can use the `plotRGB` function of the terra package to view the composite image. To do this you call the SpatRaster object, s2, and assign a band to each color channel.
-```{r rgbPlotting,fig.align='center', fig.cap="RGB view of San Rafael Swell Area"}
+We can use the `plotRGB` function of the terra package to view the composite image. 
+
+To do this, call the SpatRaster object, s2, and assign a band to each color channel; r,g,b. It is important to remember the band names. To review the band names use: `names(s2)`  
+
+
+```{r rgbPlotting, fig.width=6.8, fig.height=6.8}
 # plot a R,G,B view of the composite image
 plotRGB(s2,
         r = 'red',
@@ -77,8 +81,8 @@ plotRGB(s2,
 
 
 
-It can be helpful to apply a linear or historgram equalization stretch of the SpatRaster to aid in visualization.
-```{r rgblin}
+It can be helpful to apply a linear or histogram equalization stretch of the SpatRaster to aid in visualization.
+```{r rgblin, fig.width=6.8, fig.height=6.8}
 # apply a linear stretch
 plotRGB(s2,
           r = 'red',
@@ -93,7 +97,7 @@ plotRGB(s2,
 We can also change which bands are shown in the plot. Set the red color channel to swir2, the green color channel to nir, and the blue channel to green. This combination has many useful applications, from mineralogical differences in arid landscapes to differentiating between land cover classes.
 
 For a smoother visual output, set smooth option = TRUE.
-```{r enhancedPlot}
+```{r enhancedPlot, fig.width=6.8, fig.height=6.8}
 plotRGB(s2,
         r = 'swir2',
         g = 'nir',
@@ -115,7 +119,7 @@ swir2 <- s2$swir2
 ```
 
 
-### Normalided Difference Indices
+### Normalized Difference Indices
 To calculate normalized difference indices we first need to define the normalized function.
 ```{r normfunc}
 # Normalized Difference index function
@@ -138,8 +142,10 @@ RockIdx <- nd_fn(swir1, green)
 
 # Gypsum Index
 GypIdx <- nd_fn(swir1, swir2)
+```
 
-
+Generate a plot of the calculated normalized difference indices.
+```{r plotNormInd, fig.width=6.8, fig.height=6.8}
 # plot to check
 plot(c(NDVI, CarbIdx, RockIdx, GypIdx), main = c("NDVI", "Carbonate Index", "RockOutcrop", "Gypsum Index"))
 ```
@@ -167,6 +173,10 @@ clayMin <- (swir1)/(swir2)
 L =0.5
 savi <- ((1+L)*((nir-red)/(nir+red+L)))
 
+```
+
+Generate a plot of the other calculated spectral indices.
+```{r plotOthers, fig.width=6.8, fig.height=6.8}
 # plot to check
 plot(c(msavi, dvi, feox, ferrous, clayMin, savi), main = c("MSAVI", "DVI", "FeOx", "FerMin", "clayMin", "SAVI"))
 ```

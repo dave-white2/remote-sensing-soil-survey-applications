@@ -1,0 +1,144 @@
+### "Lab Exercise 7.2 Calculate Spectral Indices"
+
+
+# Required time: 30 minutes
+
+# Data required:
+# R-script: https://link to final script.r  
+
+# The cloud optimized geotiff (COG) used in this exercise is a median composite of Harmonized Sentinel 2 MSI surface reflectance data for the San Rafael Swell Area of Utah. It was compiled using the code editor in Google Earth Engine. 
+
+# COG URL: https://storage.googleapis.com/rsssa-bucket/sen2_srSwell_2015-2020.tif  
+
+# Code for San Rafael Swell data set : https://code.earthengine.google.com/47e01ed669f664ff1a4a052b0f1d1afb?noload=1  
+
+
+# The composite stack includes the following Sentinel2  
+# bands:      ['B2','B3','B4','B5','B6','B7','B8','B8A', 'B11','B12']   
+# renamed to: ['blue', 'green', 'red', 're1','re2','re3','nir', 'nir2', 'swir1', 'swir2'].    
+
+
+#For more information on the Harmonized Sentinel 2 data set: https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S2_SR_HARMONIZED  
+
+
+
+# Objectives:
+#1. Display RGB composite image from cloud optimized geotiffs
+#2. Define normalized difference function, calculate indices and plot 
+#3. Calculate other well known spectral indices and plot  
+
+# Calculate spectral indices overview
+#>In this exercise you will work with a cloud optimized geotiff or COG. This COG contains a composite image of Sentinel2 data. You will visualize this data assigning different bands to each of the different color channel R,G,B. The data will then be used to calculate various spectral indices. 
+
+
+## Load important libraries
+library(terra)
+
+## Load raster data
+# The raster data for this example is a cloud optimized geotiff
+s2 <- rast('https://storage.googleapis.com/rsssa-bucket/sen2_srSwell_2015-2020.tif')
+
+# inspect raster names in the s2 stack
+names(s2)
+
+# Get the min/max values from the raster stack. This is needed to display the RGB composite image
+setMinMax(s2)
+
+## Plot Spectral Composite
+# We can use the `plotRGB` function of the terra package to view the composite image. 
+
+#To do this, call the SpatRaster object, s2, and assign a band to each color channel; r,g,b. It is important to remember the band names. To review the band names use: `names(s2)`  
+
+
+# plot a R,G,B view of the composite image
+plotRGB(s2,
+        r = 'red',
+        g = 'green',
+        b = 'blue')
+
+
+# It can be helpful to apply a linear or histogram equalization stretch of the SpatRaster to aid in visualization.
+# apply a linear stretch
+plotRGB(s2,
+        r = 'red',
+        g = 'green',
+        b = 'blue',
+        stretch = 'lin') # 'hist'
+
+
+#We can also change which bands are shown in the plot. Set the red color channel to swir2, the green color channel to nir, and the blue channel to green. This combination has many useful applications, from mineralogical differences in arid landscapes to differentiating between land cover classes.
+
+#For a smoother visual output, set smooth option = TRUE.
+plotRGB(s2,
+        r = 'swir2',
+        g = 'nir',
+        b = 'green',
+        stretch = "lin",
+        smooth = T)
+
+
+
+#The various spectral indices involve raster math. To simplify these equations, we have opted to store each band as its own object with the name of the band as the object name.
+
+# get individual bands for calculations
+blue <- s2$blue
+green <- s2$green
+red <- s2$red
+nir <- s2$nir
+swir1 <- s2$swir1
+swir2 <- s2$swir2
+
+
+### Normalized Difference Indices
+#To calculate normalized difference indices we first need to define the normalized function.
+# Normalized Difference index function
+nd_fn <- function(bd1,bd2) {ind <- (bd1 - bd2)/(bd1 + bd2)
+return(ind)
+}
+
+
+
+#We can then apply this function utilizing bands of interest.
+
+# Normalized difference vegetation index
+NDVI <- nd_fn(nir, red)
+
+# Carbonate index
+CarbIdx <- nd_fn(red, green) 
+
+# Rock Outcrop Index
+RockIdx <- nd_fn(swir1, green)
+
+# Gypsum Index
+GypIdx <- nd_fn(swir1, swir2)
+
+#Generate a plot of the calculated normalized difference indices.
+# plot to check
+plot(c(NDVI, CarbIdx, RockIdx, GypIdx), main = c("NDVI", "Carbonate Index", "RockOutcrop", "Gypsum Index"))
+
+
+### Other Spectral Calculations
+# modified soil adjusted vegetation index
+msavi <-(2*nir+1-sqrt((2*nir+1)**2-8*(nir-red)))/(2)
+
+# simple ratio -- difference vegetation index
+dvi <- (nir)/(red)
+
+# simple ratio -- red blue Iron Oxide
+feox <- (red)/(blue)
+
+# simple ratio -- swir1 nir - ferrous minerals
+ferrous <- (swir1)/(nir)
+
+# clay minerals swir1/swir2
+# simple ratio -- swir1 swir2 ratio
+clayMin <- (swir1)/(swir2)
+
+# soil adjusted vegetation index
+L =0.5
+savi <- ((1+L)*((nir-red)/(nir+red+L)))
+
+
+#Generate a plot of the other calculated spectral indices.
+# plot to check
+plot(c(msavi, dvi, feox, ferrous, clayMin, savi), main = c("MSAVI", "DVI", "FeOx", "FerMin", "clayMin", "SAVI"))
