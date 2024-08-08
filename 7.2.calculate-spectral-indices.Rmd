@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Required time: 30 minutes
 
 # Data required:
- R-script: https://link to final script.r  
+ R-script: https://github.com/dave-white2/remote-sensing-soil-survey-applications/blob/main/7.2.calculate-spectral-indices-script.R
   
  The cloud optimized geotiff (COG) used in this exercise is a median composite of Harmonized Sentinel 2 MSI surface reflectance data for the San Rafael Swell Area of Utah. It was compiled using the code editor in Google Earth Engine. 
   
