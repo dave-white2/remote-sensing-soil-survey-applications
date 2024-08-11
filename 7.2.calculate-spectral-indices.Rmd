@@ -2,8 +2,8 @@
 title: "Lab Exercise 7.2 Calculate Spectral Indices"
 date: "2024-07-30"
 output:
-  html_document: default
   word_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
   
  COG URL: https://storage.googleapis.com/rsssa-bucket/sen2_srSwell_2015-2020.tif  
   
- Code for San Rafael Swell data set : https://code.earthengine.google.com/47e01ed669f664ff1a4a052b0f1d1afb?noload=1  
+ Code for San Rafael Swell data set : https://code.earthengine.google.com/e940db34370875829c85b59ce72c1932?noload=1
 
   
 The composite stack includes the following Sentinel2  
